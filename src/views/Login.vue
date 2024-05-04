@@ -1,29 +1,29 @@
+<script lang="ts">
+import { GoogleAuthProvider } from 'firebase/auth';
+export const googleAuthProvider = new GoogleAuthProvider();
+</script>
+
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
+import Button from 'primevue/button';
 import Message from 'primevue/message';
 import { useFirebaseAuth } from 'vuefire';
-import { getRedirectResult, signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 
 const auth = useFirebaseAuth()!;
-const provider = new GoogleAuthProvider();
+const googleAuthProvider = new GoogleAuthProvider();
 
 const error = ref(null);
-function signinRedirect() {
-    signInWithRedirect(auth, provider).catch((reason) => {
-        console.error('Failed signinRedirect', reason);
+function signinPopup() {
+    error.value = null;
+    signInWithPopup(auth, googleAuthProvider).catch((reason) => {
+        console.error('Failed sign', reason);
         error.value = reason;
     });
 }
-
-onMounted(() => {
-    getRedirectResult(auth).catch((reason) => {
-        console.error('Failed redirect result', reason);
-        error.value = reason;
-    });
-});
 </script>
 
 <template>
     <Message v-if="error" severity="error">{{ error }}</Message>
-    <button @click="signinRedirect()">SignIn with Google</button>
+    <Button label="SignIn with Google" @click="signinPopup()" />
 </template>
