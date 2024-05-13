@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 
-const ledgers = ref(null);
+const ledgers: Record<any, any> = ref(null);
 
 fetch(`${import.meta.env.VITE_SERVICE_BASE_URL}/ledgers`)
     .then((response) => response.json())
