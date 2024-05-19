@@ -7,10 +7,9 @@ export const googleAuthProvider = new GoogleAuthProvider();
 import { ref } from 'vue';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
-import { useFirebaseAuth, useCurrentUser } from 'vuefire';
+import { useFirebaseAuth } from 'vuefire';
 import { signInWithPopup } from 'firebase/auth';
 
-const user = useCurrentUser();
 const auth = useFirebaseAuth()!;
 
 const error = ref(null);
@@ -24,7 +23,6 @@ function signinPopup() {
 </script>
 
 <template>
-    <p v-if="user">Hello {{ user.displayName }}</p>
     <Message v-if="error" severity="error">{{ error }}</Message>
     <Button label="SignIn with Google" @click="signinPopup()" />
 </template>

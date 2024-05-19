@@ -26,17 +26,19 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-    if (to.meta.requiresAuth) {
-        const currentUser = await getCurrentUser();
+    const currentUser = await getCurrentUser();
 
-        if (!currentUser) {
-            return {
-                path: '/login',
-                query: {
-                    redirect: to.fullPath
-                }
-            };
-        }
+    if (to.meta.requiresAuth && !currentUser) {
+        return {
+            path: '/login',
+            query: {
+                redirect: to.fullPath
+            }
+        };
+    }
+
+    if (!to.meta.requiresAuth && currentUser) {
+        router.push('/');
     }
 });
 

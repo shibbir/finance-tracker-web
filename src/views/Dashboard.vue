@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import Button from 'primevue/button';
-import { signOut } from 'firebase/auth';
-import { useFirebaseAuth, useCurrentUser } from 'vuefire';
-import Ledgers from '../components/Ledgers.vue';
-
-const auth = useFirebaseAuth()!;
-const user = useCurrentUser();
+import Navbar from '../components/Navbar.vue';
 </script>
 
 <template>
-    <p v-if="user">Hello {{ user.displayName }}</p>
-    <Button label="Sign Out" v-if="user" @click="signOut(auth)" />
-    <Ledgers />
+    <div class="grid">
+        <div class="col-3">
+            <Suspense>
+                <Navbar />
+                <template #fallback> Loading... </template>
+            </Suspense>
+        </div>
+        <div class="col-9">Hello</div>
+    </div>
 </template>
