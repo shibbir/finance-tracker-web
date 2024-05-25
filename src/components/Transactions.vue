@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import Card from 'primevue/card';
 import Column from 'primevue/column';
+import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
+import { useTransactionStore } from '@/store';
 
-const props = defineProps(['ledgerId']);
+const transactions = ref([]);
+const route = useRoute();
+const store = useTransactionStore();
 
-const transactions = ref(null);
+watch(() => route.query.account_id, fetchData, { immediate: true });
 
-fetch(`${import.meta.env.VITE_SERVICE_BASE_URL}/ledgers/${props.ledgerId}/transactions`)
-    .then((response) => response.json())
-    .then((data) => (transactions.value = data));
+async function fetchData() {
+    await store.getTransactions(route.params.id, route.query);
+    transactions.value = store.transactions;
+}
 </script>
 
 <template>
@@ -26,17 +32,19 @@ fetch(`${import.meta.env.VITE_SERVICE_BASE_URL}/ledgers/${props.ledgerId}/transa
                 :rows="20"
                 :rowsPerPageOptions="[20, 30, 40, 50]"
             >
+                <template #header>
+                    <div style="text-align: left">
+                        <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
+                    </div>
+                </template>
                 <Column field="date" header="Date"></Column>
                 <Column field="account.name" header="Account"></Column>
                 <Column field="payee.name" header="Payee"></Column>
                 <Column field="category.name" header="Category"></Column>
                 <Column field="memo" header="Memo"></Column>
-                <Column field="amount" header="Amount"></Column>
-                <Column
-                    :rowEditor="true"
-                    style="width: 10%; min-width: 8rem"
-                    bodyStyle="text-align:center"
-                ></Column>
+                <Column field="credit" header="Credit"></Column>
+                <Column field="debit" header="debit"></Column>
+                <Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center"></Column>
             </DataTable>
         </template>
     </Card>

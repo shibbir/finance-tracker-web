@@ -1,8 +1,8 @@
 import { getCurrentUser } from 'vuefire';
 import { createRouter, createWebHistory } from 'vue-router';
 
-import Login from '../views/Login.vue';
-import Dashboard from '../views/Dashboard.vue';
+import Login from '@/views/Login.vue';
+import Dashboard from '@/views/Dashboard.vue';
 import LedgerView from '@/views/LedgerView.vue';
 
 const router = createRouter({

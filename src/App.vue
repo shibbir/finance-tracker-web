@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { watch } from 'vue';
+import { watch, onMounted } from 'vue';
 import { useCurrentUser } from 'vuefire';
 import { useRouter, useRoute, RouterView } from 'vue-router';
+
+import { useLedgerStore } from '@/store';
 
 const user = useCurrentUser();
 const router = useRouter();
 const route = useRoute();
+
+onMounted(async () => {
+    const store = useLedgerStore();
+    await store.getLedgers();
+});
 
 watch(user, async (currentUser, previousUser) => {
     if (!currentUser && previousUser && route.meta.requiresAuth) {

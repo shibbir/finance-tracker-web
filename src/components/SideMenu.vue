@@ -1,31 +1,39 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import axios from 'axios';
 import Menu from 'primevue/menu';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { signOut } from 'firebase/auth';
 import { useFirebaseAuth, useCurrentUser } from 'vuefire';
+
+import { useLedgerStore } from '@/store';
 
 const router = useRouter();
 const user = useCurrentUser();
 const auth = useFirebaseAuth()!;
 
-const ledgers: any = await axios.get(`${import.meta.env.VITE_SERVICE_BASE_URL}/ledgers`);
+const route = useRoute();
+const store = useLedgerStore();
+await store.getLedger(route.params.id);
+const ledger = store.ledger;
 
 const items = ref([
     {
         separator: true
     },
     {
-        label: 'Ledgers',
-        items: ledgers.data.map((ledger) => ({
-            label: ledger.name,
-            route: `/ledgers/${ledger._id}`
+        label: 'Accounts',
+        items: ledger?.accounts.map((account) => ({
+            label: `${account.name} (${account.balance})`,
+            route: `/ledgers/${route.params.id}?account_id=${account._id}`
         }))
     },
     {
         label: 'Profile',
         items: [
+            {
+                label: user.value?.displayName,
+                route: '/profile'
+            },
             {
                 label: 'Logout',
                 command: () => {
