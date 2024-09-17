@@ -14,12 +14,7 @@ fetch(`${import.meta.env.VITE_SERVICE_BASE_URL}/ledgers`)
     <Card>
         <template #title>Ledgers</template>
         <template #content>
-            <router-link
-                v-for="ledger in ledgers"
-                :key="ledger._id"
-                :to="`/ledgers/${ledger._id}`"
-                rel="noopener"
-            >
+            <router-link v-for="ledger in ledgers" :key="ledger._id" :to="`/ledgers/${ledger._id}`" rel="noopener">
                 <Button :label="ledger.name" severity="secondary" text raised />
             </router-link>
         </template>

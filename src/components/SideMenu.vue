@@ -22,7 +22,7 @@ const items = ref([
     },
     {
         label: 'Accounts',
-        items: ledger?.accounts.map((account) => ({
+        items: ledger.accounts.map((account) => ({
             label: `${account.name} (${account.balance})`,
             route: `/ledgers/${route.params.id}?account_id=${account._id}`
         }))
@@ -47,7 +47,7 @@ const items = ref([
 </script>
 
 <template>
-    <Menu :model="items" class="w-full md:w-15rem">
+    <Menu :model="items" class="w-full">
         <template #start>
             <span class="inline-flex align-items-center gap-1 px-2 py-2">
                 <span class="font-medium text-xl font-semibold">Finance Tracker</span>

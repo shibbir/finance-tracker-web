@@ -17,20 +17,13 @@ const ledgers: any = store.ledgers;
                 <template #title>{{ ledger.name }}</template>
                 <template #content>
                     <p class="m-0">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error
-                        repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione
-                        quam perferendis esse, cupiditate neque quas!
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt
+                        quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!
                     </p>
                 </template>
                 <template #footer>
                     <div class="flex gap-3 mt-1">
-                        <Button
-                            label="Explore"
-                            severity="secondary"
-                            outlined
-                            class="w-full"
-                            @click="router.push(`/ledgers/${ledger._id}`)"
-                        />
+                        <Button label="Explore" severity="secondary" outlined class="w-full" @click="router.push(`/ledgers/${ledger._id}`)" />
                     </div>
                 </template>
             </Card>
