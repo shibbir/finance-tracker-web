@@ -55,17 +55,12 @@ const formatCurrency = (value: number) => {
                 </template>
                 <Column field="date" header="Date"></Column>
                 <Column field="account.name" header="Account"></Column>
-                <Column field="payee.name" header="Payee"></Column>
+                <Column field="recipient.name" header="Recipient"></Column>
                 <Column field="category.name" header="Category"></Column>
                 <Column field="memo" header="Memo"></Column>
-                <Column field="credit" header="Credit">
+                <Column field="amount" header="Amount">
                     <template #body="slotProps">
-                        {{ formatCurrency(slotProps.data.credit) }}
-                    </template>
-                </Column>
-                <Column field="debit" header="Debit">
-                    <template #body="slotProps">
-                        {{ formatCurrency(slotProps.data.debit) }}
+                        {{ formatCurrency(slotProps.data.amount) }}
                     </template>
                 </Column>
                 <Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center"></Column>
