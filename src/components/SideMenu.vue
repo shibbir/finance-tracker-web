@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Menu from 'primevue/menu';
+import Button from 'primevue/button';
 import { useRoute, useRouter } from 'vue-router';
 import { signOut } from 'firebase/auth';
 import { useFirebaseAuth, useCurrentUser } from 'vuefire';
@@ -28,6 +29,19 @@ const items = ref([
         }))
     },
     {
+        label: 'Reports',
+        items: [
+            {
+                label: 'Income vs Expense',
+                route: `/ledgers/${route.params.id}/report/income-vs-expense`
+            },
+            {
+                label: 'Expense Brekdown',
+                route: `/ledgers/${route.params.id}/report/expense-brekdown`
+            }
+        ]
+    },
+    {
         label: 'Profile',
         items: [
             {
@@ -44,6 +58,10 @@ const items = ref([
         ]
     }
 ]);
+
+function toggleDarkMode() {
+    document.documentElement.classList.toggle('my-app-dark');
+}
 </script>
 
 <template>
@@ -51,6 +69,7 @@ const items = ref([
         <template #start>
             <span class="inline-flex align-items-center gap-1 px-2 py-2">
                 <span class="font-medium text-xl font-semibold">Finance Tracker</span>
+                <i class="pi pi-moon" style="color: green" @click="toggleDarkMode()"></i>
             </span>
         </template>
         <template #submenuheader="{ item }">

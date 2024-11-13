@@ -5,6 +5,8 @@ import Card from 'primevue/card';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
+import Toolbar from 'primevue/toolbar';
+import FileUpload from 'primevue/fileupload';
 import format_currency from '@/core/currency_formatter';
 import { useTransactionStore, useLedgerStore } from '@/store';
 import TransactionForm from '@/components/TransactionForm.vue';
@@ -39,6 +41,28 @@ const formatCurrency = (value: number) => {
     <Card>
         <template #title>Transactions</template>
         <template #content>
+            <Toolbar class="mb-6">
+                <template #start>
+                    <Button label="New" icon="pi pi-plus" class="mr-2" @click="transaction_form_visibility = true" />
+                    <Button label="Delete" icon="pi pi-trash" severity="danger" outlined />
+                </template>
+
+                <template #end>
+                    <FileUpload
+                        mode="basic"
+                        accept="image/*"
+                        :maxFileSize="1000000"
+                        label="Import"
+                        customUpload
+                        chooseLabel="Import"
+                        class="mr-2"
+                        auto
+                        :chooseButtonProps="{ severity: 'secondary' }"
+                    />
+                    <Button label="Export" icon="pi pi-upload" severity="secondary" />
+                </template>
+            </Toolbar>
+
             <DataTable
                 :value="transactions"
                 tableStyle="min-width: 50rem"
@@ -46,13 +70,8 @@ const formatCurrency = (value: number) => {
                 size="small"
                 paginator
                 :rows="20"
-                :rowsPerPageOptions="[20, 30, 40, 50]"
+                :rowsPerPageOptions="[10, 20, 30, 40, 50, 100]"
             >
-                <template #header>
-                    <div style="text-align: left">
-                        <Button icon="pi pi-external-link" label="Add" @click="transaction_form_visibility = true" />
-                    </div>
-                </template>
                 <Column field="date" header="Date"></Column>
                 <Column field="account.name" header="Account"></Column>
                 <Column field="recipient.name" header="Recipient"></Column>

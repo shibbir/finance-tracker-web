@@ -4,6 +4,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/views/Login.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import LedgerView from '@/views/LedgerView.vue';
+import IncomeVsExpenseView from '@/modules/report/IncomeVsExpenseView.vue';
+import ExpenseBreakdownView from '@/modules/report/ExpenseBreakdownView.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -20,6 +22,16 @@ const router = createRouter({
         {
             path: '/ledgers/:id',
             component: LedgerView,
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/ledgers/:id/report/income-vs-expense',
+            component: IncomeVsExpenseView,
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/ledgers/:id/report/expense-brekdown',
+            component: ExpenseBreakdownView,
             meta: { requiresAuth: true }
         }
     ]

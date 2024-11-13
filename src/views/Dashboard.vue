@@ -1,18 +1,25 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
+import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 
 import { useLedgerStore } from '@/store';
 
 const router = useRouter();
-const store = useLedgerStore();
-const ledgers: any = store.ledgers;
+
+const { ledgers } = storeToRefs(useLedgerStore());
+
+onMounted(async () => {
+    const store = useLedgerStore();
+    await store.getLedgers();
+});
 </script>
 
 <template>
     <div class="grid">
-        <div class="col-12 md:col-6 lg:col-3" v-for="ledger in ledgers">
+        <div class="col-12 md:col-6 lg:col-3" v-if="ledgers" v-for="ledger in ledgers">
             <Card style="width: 25rem; overflow: hidden">
                 <template #title>{{ ledger.name }}</template>
                 <template #content>
