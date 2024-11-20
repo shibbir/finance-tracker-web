@@ -5,7 +5,7 @@ import Button from 'primevue/button';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 
-import { useLedgerStore } from '@/store';
+import useLedgerStore from '@/modules/ledger/ledger.store';
 
 const router = useRouter();
 

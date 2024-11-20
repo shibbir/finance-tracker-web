@@ -3,8 +3,6 @@ import { watch } from 'vue';
 import { useCurrentUser } from 'vuefire';
 import { useRouter, useRoute, RouterView } from 'vue-router';
 
-import { useLedgerStore } from '@/store';
-
 const user = useCurrentUser();
 const router = useRouter();
 const route = useRoute();

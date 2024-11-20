@@ -15,7 +15,8 @@ import VerticalBarChart from '@/components/VerticalBarChart.vue';
 import DoughnutChart from '@/components/DoughnutChart.vue';
 
 import format_currency from '@/core/currency_formatter';
-import { useTransactionStore, useLedgerStore } from '@/store';
+import useLedgerStore from '@/modules/ledger/ledger.store';
+import useTransactionStore from '@/modules/transaction/transaction.store';
 import MeterGroup from 'primevue/metergroup';
 
 const props = defineProps(['ledgerId']);

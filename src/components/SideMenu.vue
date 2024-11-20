@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Menu from 'primevue/menu';
-import Button from 'primevue/button';
-import { useRoute, useRouter } from 'vue-router';
 import { signOut } from 'firebase/auth';
+import { useRoute, useRouter } from 'vue-router';
 import { useFirebaseAuth, useCurrentUser } from 'vuefire';
 
-import { useLedgerStore } from '@/store';
+import useLedgerStore from '@/modules/ledger/ledger.store';
+import format_currency from '@/core/currency_formatter';
 
 const router = useRouter();
 const user = useCurrentUser();
@@ -23,8 +23,8 @@ const items = ref([
     },
     {
         label: 'Accounts',
-        items: ledger.accounts.map((account) => ({
-            label: `${account.name} (${account.balance})`,
+        items: ledger?.accounts.map((account: { name: any; balance: number; _id: any }) => ({
+            label: `${account.name} (${format_currency(account.balance)})`,
             route: `/ledgers/${route.params.id}?account_id=${account._id}`
         }))
     },
@@ -72,7 +72,7 @@ function toggleDarkMode() {
                 <i class="pi pi-moon" style="color: green" @click="toggleDarkMode()"></i>
             </span>
         </template>
-        <template #submenuheader="{ item }">
+        <template #submenulabel="{ item }">
             <span class="text-primary font-bold">{{ item.label }}</span>
         </template>
         <template #item="{ item, props }">

@@ -13,3 +13,7 @@ body {
     @tailwind components;
     @tailwind utilities;
 }
+
+td a {
+    text-decoration: underline;
+}
