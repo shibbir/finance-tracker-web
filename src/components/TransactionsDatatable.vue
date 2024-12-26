@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { watch } from 'vue';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 
@@ -16,6 +17,13 @@ const props = defineProps({
         required: true
     }
 });
+
+watch(
+    () => props.filter,
+    async () => {
+        await transactionStore.getTransactions(props.ledgerId, props.filter);
+    }
+);
 
 await transactionStore.getTransactions(props.ledgerId, props.filter);
 </script>

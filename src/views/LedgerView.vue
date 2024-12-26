@@ -49,7 +49,12 @@ const visible = ref(false);
                     </Toolbar>
 
                     <Suspense>
-                        <TransactionsDatatable :ledger-id="route.params.id" :fields="['memo']" :paginator="true" />
+                        <TransactionsDatatable
+                            :ledger-id="route.params.id"
+                            :fields="['memo']"
+                            :paginator="true"
+                            :filter="{ account_id: route.query.account_id }"
+                        />
                         <template #fallback> Loading... </template>
                     </Suspense>
                 </template>
