@@ -53,7 +53,7 @@ const visible = ref(false);
                             :ledger-id="route.params.id"
                             :fields="['memo']"
                             :paginator="true"
-                            :filter="{ account_id: route.query.account_id }"
+                            :filter="route.query.account_id ? { account_id: route.query.account_id } : null"
                         />
                         <template #fallback> Loading... </template>
                     </Suspense>

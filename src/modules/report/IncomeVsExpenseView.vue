@@ -19,7 +19,7 @@ const year = ref(new Date().getFullYear());
             </Suspense>
         </div>
         <div class="col-span-10">
-            <Select v-model="year" :options="[2021, 2022, 2023, 2024]" />
+            <Select v-model="year" :options="[2021, 2022, 2023, 2024, 2025]" />
 
             <IncomeVsExpense :ledger-id="route.params.id" :year="year" />
 

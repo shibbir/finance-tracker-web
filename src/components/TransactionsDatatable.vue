@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { watch } from 'vue';
+import { format } from 'date-fns';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 
@@ -29,12 +30,16 @@ await transactionStore.getTransactions(props.ledgerId, props.filter);
 </script>
 
 <template>
-    <DataTable :value="transactionStore.transactions" :paginator="props.paginator" :rows="20" :rowsPerPageOptions="[10, 20, 30, 40, 50]">
-        <Column field="date" header="Date"></Column>
+    <DataTable size="small" :value="transactionStore.transactions" :paginator="props.paginator" :rows="20" :rowsPerPageOptions="[20, 40, 60, 80, 100]">
+        <Column field="date" header="Date">
+            <template #body="slotProps">
+                {{ format(new Date(slotProps.data.date), 'dd/MM/yyyy') }}
+            </template>
+        </Column>
         <Column field="account.name" header="Account"></Column>
         <Column field="merchant.name" header="Merchant"></Column>
         <Column field="category.name" header="Category"></Column>
-        <Column field="memo" header="Memo" v-if="props.fields?.includes('memo')"></Column>
+        <Column field="memo" header="Memo" v-if="props.fields?.includes('memo')" style="max-width: 450px" class="truncate"></Column>
         <Column field="amount" header="Amount">
             <template #body="slotProps">
                 {{ format_currency(slotProps.data.amount) }}

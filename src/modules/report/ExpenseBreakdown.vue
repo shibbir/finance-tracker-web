@@ -132,39 +132,4 @@ const [category_id] = defineField('category_id');
             </div>
         </form>
     </Panel>
-
-    <Panel header="Expenses by Category">
-        <MeterGroup :value="expenses" :max="10000" />
-    </Panel>
-
-    <Panel header="Income vs Expense">
-        <VerticalBarChart
-            :data="{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                datasets: [
-                    {
-                        label: 'Income',
-                        data: [30, 40, 50, 100, 30, 40, 800, 100, 30, 40, 300, 75]
-                    },
-                    {
-                        label: 'Expense',
-                        data: [28, 48, 40, 19, 86, 27, 90, 28, 48, 40, 19, 86]
-                    }
-                ]
-            }"
-        />
-    </Panel>
-
-    <Panel header="Monthly Expenses">
-        <DoughnutChart
-            :data="{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                datasets: [
-                    {
-                        data: [30, 40, 50, 100, 30, 40, 200, 100, 30, 40, 300, 75]
-                    }
-                ]
-            }"
-        />
-    </Panel>
 </template>
