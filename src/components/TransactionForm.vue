@@ -91,14 +91,7 @@ const [memo] = defineField('memo');
 
         <div class="flex items-center gap-4 mb-4">
             <label for="category" class="font-semibold w-24">Category</label>
-            <Select
-                v-model="category_id"
-                :options="categories"
-                optionLabel="name"
-                optionValue="_id"
-                placeholder="Select category"
-                class="flex-auto"
-            />
+            <Select v-model="category_id" :options="categories" optionLabel="name" optionValue="_id" placeholder="Select category" class="flex-auto" />
         </div>
 
         <div class="flex items-center gap-4 mb-4">

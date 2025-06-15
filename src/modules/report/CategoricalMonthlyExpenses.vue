@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import Column from 'primevue/column';
-import Dialog from 'primevue/dialog';
-import DataTable from 'primevue/datatable';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
 
 import format_currency from '@/core/currency_formatter';
 import TransactionsDatatable from '@/components/TransactionsDatatable.vue';
 
 const props = defineProps(['ledgerId', 'year']);
 const categorical_monthly_expenses = ref([]);
+
+interface Filter {
+    category_id: string;
+    start_date: string;
+    end_date: string;
+}
 
 watch(
     () => props.year,
@@ -22,89 +26,65 @@ watch(
     { immediate: true }
 );
 
-const handleSubmit = function (category_id: string, month: number) {
+const showExpensesForSelectedCategory = function (category_id: string, month: number) {
     visible.value = true;
 
     filter.value = {
         category_id,
-        start_date: new Date(props.year, month, 1).toISOString(),
-        end_date: new Date(props.year, month, new Date(props.year, month + 1, 0).getDate()).toISOString()
+        start_date: startOfMonth(new Date(props.year, month)).toISOString(),
+        end_date: endOfMonth(new Date(props.year, month)).toISOString()
     };
 };
 
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
 const visible = ref(false);
-const filter = ref({});
+const filter = ref<Filter>({
+    category_id: '',
+    start_date: '',
+    end_date: ''
+});
 </script>
 
 <template>
-    <p class="text-xl">Categorical Monthly Expenses</p>
-    <DataTable :value="categorical_monthly_expenses">
-        <Column field="category_name" header="Category"></Column>
-        <Column field="january" header="January">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 0)">{{ format_currency(slotProps.data.january) }}</a>
-            </template>
-        </Column>
-        <Column field="february" header="February">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 1)">{{ format_currency(slotProps.data.february) }}</a>
-            </template>
-        </Column>
-        <Column field="march" header="March">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 2)">{{ format_currency(slotProps.data.march) }}</a>
-            </template>
-        </Column>
-        <Column field="april" header="April">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 3)">{{ format_currency(slotProps.data.april) }}</a>
-            </template>
-        </Column>
-        <Column field="may" header="May">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 4)">{{ format_currency(slotProps.data.may) }}</a>
-            </template>
-        </Column>
-        <Column field="june" header="June">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 5)">{{ format_currency(slotProps.data.june) }}</a>
-            </template>
-        </Column>
-        <Column field="july" header="July">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 6)">{{ format_currency(slotProps.data.july) }}</a>
-            </template>
-        </Column>
-        <Column field="august" header="August">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 7)">{{ format_currency(slotProps.data.august) }}</a>
-            </template>
-        </Column>
-        <Column field="september" header="September">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 8)">{{ format_currency(slotProps.data.september) }}</a>
-            </template>
-        </Column>
-        <Column field="october" header="October">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 9)">{{ format_currency(slotProps.data.october) }}</a>
-            </template>
-        </Column>
-        <Column field="november" header="November">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 10)">{{ format_currency(slotProps.data.november) }}</a>
-            </template>
-        </Column>
-        <Column field="december" header="December">
-            <template #body="slotProps">
-                <a href="javascript:void(0)" @click="handleSubmit(slotProps.data.category_id, 11)">{{ format_currency(slotProps.data.december) }}</a>
-            </template>
-        </Column>
-    </DataTable>
+    <div class="table-wrapper">
+        <h2>Categorical Monthly Expenses</h2>
 
-    <Dialog v-model:visible="visible" modal>
-        <Suspense>
-            <TransactionsDatatable :ledger-id="props.ledgerId" :filter="filter" :fields="['date', 'account', 'category', 'merchant', 'amount']" />
-        </Suspense>
-    </Dialog>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th v-for="(month, index) in months" :key="index">{{ month }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(row, idx) in categorical_monthly_expenses" :key="idx">
+                    <td>{{ row.category_name }}</td>
+                    <td v-for="(month, index) in months" :key="index">
+                        <a href="#" @click.prevent="showExpensesForSelectedCategory(row.category_id, index)">
+                            {{ format_currency(row[month.toLowerCase()]) }}
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="modal" v-if="visible">
+            <div class="modal-content">
+                <span class="close-btn" @click="visible = false">&times;</span>
+                <h3 v-if="filter.start_date && filter.end_date">
+                    Expenses from {{ format(new Date(filter.start_date), 'dd.MM.yyyy') }} - {{ format(new Date(filter.end_date), 'dd.MM.yyyy') }}
+                </h3>
+                <Suspense>
+                    <TransactionsDatatable :ledger-id="props.ledgerId" :filter="filter" :fields="['date', 'account', 'category', 'merchant', 'amount']" />
+                </Suspense>
+            </div>
+        </div>
+    </div>
 </template>
+
+<style scoped>
+h3 {
+    margin-left: 10px;
+}
+</style>

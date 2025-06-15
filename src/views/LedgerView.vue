@@ -1,67 +1,132 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-import Card from 'primevue/card';
-import Dialog from 'primevue/dialog';
-import Button from 'primevue/button';
-import Toolbar from 'primevue/toolbar';
-import FileUpload from 'primevue/fileupload';
-import SideMenu from '@/components/SideMenu.vue';
-import TransactionForm from '@/components/TransactionForm.vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import useLedgerStore from '@/modules/ledger/ledger.store';
 import TransactionsDatatable from '@/components/TransactionsDatatable.vue';
 
+const router = useRouter();
 const route = useRoute();
-const visible = ref(false);
+
+const store = useLedgerStore();
+
+onMounted(async () => {
+    await store.getLedger(route.params.id);
+});
+
+const accounts = computed(() => store.ledger?.accounts || []);
+const merchants = computed(() => store.ledger?.merchants || []);
+const categories = computed(() => store.ledger?.categories || []);
+
+const selectedAccount = ref('');
+const selectedMerchant = ref('');
+const selectedCategory = ref('');
+const startDate = ref('');
+const endDate = ref('');
+
+const filter = computed(() => {
+    const f: Record<string, any> = {};
+
+    if (selectedAccount.value) f.account_id = selectedAccount.value;
+    if (selectedMerchant.value) f.merchant_id = selectedMerchant.value;
+    if (selectedCategory.value) f.category_id = selectedCategory.value;
+    if (startDate.value) f.start_date = startDate.value;
+    if (endDate.value) f.end_date = endDate.value;
+
+    return f;
+});
+
+watch(
+    [selectedAccount, selectedMerchant, selectedCategory, startDate, endDate],
+    () => {
+        const query: Record<string, any> = {};
+
+        if (selectedAccount.value) query.account_id = selectedAccount.value;
+        if (selectedMerchant.value) query.merchant_id = selectedMerchant.value;
+        if (selectedCategory.value) query.category_id = selectedCategory.value;
+        if (startDate.value) query.start_date = startDate.value;
+        if (endDate.value) query.end_date = endDate.value;
+
+        router.replace({ query });
+    },
+    { immediate: true }
+);
+
+const filtersReady = ref(false);
+
+onMounted(async () => {
+    if (route.query.account_id) selectedAccount.value = String(route.query.account_id);
+    if (route.query.merchant_id) selectedMerchant.value = String(route.query.merchant_id);
+    if (route.query.category_id) selectedCategory.value = String(route.query.category_id);
+    if (route.query.start_date) startDate.value = String(route.query.start_date);
+    if (route.query.end_date) endDate.value = String(route.query.end_date);
+
+    await nextTick();
+    filtersReady.value = true;
+});
 </script>
 
 <template>
-    <div class="grid grid-cols-12">
-        <div class="col-span-2">
-            <Suspense>
-                <SideMenu />
-                <template #fallback> Loading... </template>
-            </Suspense>
-        </div>
-        <div class="col-span-10">
-            <Card>
-                <template #title>Transactions</template>
-                <template #content>
-                    <Toolbar class="mb-6">
-                        <template #start>
-                            <Button label="New" icon="pi pi-plus" class="mr-2" @click="visible = true" />
-                            <Button label="Delete" icon="pi pi-trash" severity="danger" outlined />
-                        </template>
+    <div class="container">
+        <form class="filter-form" @submit.prevent>
+            <div class="form-group">
+                <label for="account">Account</label>
+                <select id="account" v-model="selectedAccount">
+                    <option value="">All</option>
+                    <option v-for="acc in accounts" :key="acc._id" :value="acc._id">{{ acc.name }}</option>
+                </select>
+            </div>
 
-                        <template #end>
-                            <FileUpload
-                                mode="basic"
-                                accept="image/*"
-                                :maxFileSize="1000000"
-                                label="Import"
-                                customUpload
-                                chooseLabel="Import"
-                                class="mr-2"
-                                auto
-                                :chooseButtonProps="{ severity: 'secondary' }"
-                            />
-                            <Button label="Export" icon="pi pi-upload" severity="secondary" />
-                        </template>
-                    </Toolbar>
+            <div class="form-group">
+                <label for="merchant">Merchant</label>
+                <select id="merchant" v-model="selectedMerchant">
+                    <option value="">All</option>
+                    <option v-for="merch in merchants" :key="merch._id" :value="merch._id">{{ merch.name }}</option>
+                </select>
+            </div>
 
-                    <Suspense>
-                        <TransactionsDatatable
-                            :ledger-id="route.params.id"
-                            :fields="['memo']"
-                            :paginator="true"
-                            :filter="route.query.account_id ? { account_id: route.query.account_id } : null"
-                        />
-                        <template #fallback> Loading... </template>
-                    </Suspense>
-                </template>
-            </Card>
-            <Dialog v-model:visible="visible" modal header="Add transaction" :style="{ width: '30rem' }">
-                <TransactionForm :ledger-id="route.params.id" />
-            </Dialog>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" v-model="selectedCategory">
+                    <option value="">All</option>
+                    <option v-for="cat in categories" :key="cat._id" :value="cat._id">{{ cat.name }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="start">Start Date</label>
+                <input type="date" id="start" v-model="startDate" />
+            </div>
+
+            <div class="form-group">
+                <label for="end">End Date</label>
+                <input type="date" id="end" v-model="endDate" />
+            </div>
+        </form>
+
+        <div v-if="filtersReady" class="table-wrapper">
+            <TransactionsDatatable :ledger-id="route.params.id" :fields="['memo']" :filter="filter" />
         </div>
     </div>
 </template>
+
+<style scoped>
+.filter-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 150px;
+}
+
+select,
+input[type='date'] {
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 100%;
+}
+</style>

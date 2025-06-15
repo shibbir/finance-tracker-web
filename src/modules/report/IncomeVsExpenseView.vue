@@ -1,31 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import Select from 'primevue/select';
-import SideMenu from '@/components/SideMenu.vue';
-import IncomeVsExpense from '@/modules/report/IncomeVsExpense.vue';
+import useLedgerStore from '@/modules/ledger/ledger.store';
 import CategoricalMonthlyExpenses from '@/modules/report/CategoricalMonthlyExpenses.vue';
 
 const route = useRoute();
-const year = ref(new Date().getFullYear());
+const store = useLedgerStore();
+
+onMounted(async () => {
+    await store.getLedger(route.params.id);
+});
+
+const years = [2025, 2024, 2023, 2022];
+const selectedYear = ref(new Date().getFullYear());
 </script>
 
 <template>
-    <div class="grid grid-cols-12 gap-3">
-        <div class="col-span-2">
-            <Suspense>
-                <SideMenu />
-                <template #fallback> Loading... </template>
-            </Suspense>
-        </div>
-        <div class="col-span-10">
-            <Select v-model="year" :options="[2021, 2022, 2023, 2024, 2025]" />
-
-            <IncomeVsExpense :ledger-id="route.params.id" :year="year" />
-
-            <br />
-
-            <CategoricalMonthlyExpenses :ledger-id="route.params.id" :year="year" />
-        </div>
+    <div class="container">
+        <select v-model="selectedYear">
+            <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+        </select>
+        <CategoricalMonthlyExpenses :ledger-id="route.params.id" :year="selectedYear" />
     </div>
 </template>
