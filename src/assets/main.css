@@ -19,26 +19,23 @@ body {
     margin: 0;
 }
 
-input,
-select {
+select,
+input[type='date'] {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem;
     background-color: var(--color-input-bg);
     color: var(--color-input-text);
     border: 1px solid var(--color-input-border);
-    padding: 0.5rem;
     border-radius: 4px;
-}
-
-input:focus,
-select:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px rgba(79, 157, 252, 0.2);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: var(--color-surface);
+    /* background-color: var(--color-surface); */
     color: var(--color-text);
     font-size: 0.95rem;
     border: 1px solid var(--color-border);
@@ -86,7 +83,7 @@ table a:hover {
     margin: 0 auto;
     padding: 1.5rem;
     box-sizing: border-box;
-    max-width: 1600px;
+    max-width: 1670px;
 }
 
 .table-wrapper {
@@ -129,4 +126,17 @@ table a:hover {
 
 .modal .close-btn:hover {
     color: var(--color-primary-hover);
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+@media (max-width: 768px) {
+    .grid-layout {
+        grid-template-columns: 1fr;
+    }
 }

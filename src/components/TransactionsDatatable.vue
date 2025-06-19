@@ -7,15 +7,15 @@ import useTransactionStore from '@/modules/transaction/transaction.store';
 
 const transactionStore = useTransactionStore();
 
-const props = defineProps({
-    filter: Object,
-    fields: Object,
+const props = defineProps<{
+    filter: Record<string, any>,
+    fields: string[],
     ledgerId: { type: String, required: true }
-});
+}>();
 
 watch(
-    () => [props.filter],
-    async ([filter]) => {
+    () => props.filter,
+    async (filter) => {
         await transactionStore.getTransactions(props.ledgerId, filter);
     },
     { deep: true, immediate: true }
@@ -35,12 +35,12 @@ watch(
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(tx, index) in transactionStore.transactions" :key="index">
+            <tr v-for="tx in transactionStore.transactions" :key="tx._id">
                 <td>{{ format_date(tx.date) }}</td>
                 <td>{{ tx.account.name }}</td>
                 <td>{{ tx.merchant.name }}</td>
                 <td>{{ tx.category.name }}</td>
-                <td class="memo-cell" v-if="props.fields?.includes('memo')">{{ tx.memo }}</td>
+                <td class="memo-cell" v-if="props.fields?.includes('memo')" :title="tx.memo">{{ tx.memo }}</td>
                 <td>{{ format_currency(tx.amount) }}</td>
             </tr>
         </tbody>
