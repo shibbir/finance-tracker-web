@@ -5,13 +5,11 @@ import type ITransaction from './transaction.interface';
 export default defineStore('TransactionStore', {
     state: () => ({ transactions: [] as ITransaction[] }),
     actions: {
-        async getTransactions(ledger_id: any, query?: any) {
+        async getTransactions(ledger_id: string, query?: any) {
             let url = `${import.meta.env.VITE_SERVICE_BASE_URL}/ledgers/${ledger_id}/transactions`;
             if (query && Object.keys(query).length) {
-                url += `?`;
-                for (const key in query) {
-                    url += `${key}=${query[key]}&`;
-                }
+                const params = new URLSearchParams(query).toString();
+                url += `?${params}`;
             }
             this.transactions = (await axios.get(url)).data;
         },

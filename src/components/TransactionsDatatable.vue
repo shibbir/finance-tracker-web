@@ -8,9 +8,9 @@ import useTransactionStore from '@/modules/transaction/transaction.store';
 const transactionStore = useTransactionStore();
 
 const props = defineProps<{
-    filter: Record<string, any>,
-    fields: string[],
-    ledgerId: { type: String, required: true }
+    filter: Record<string, any>;
+    fields: string[];
+    ledgerId: string;
 }>();
 
 watch(
@@ -55,5 +55,15 @@ watch(
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+th,
+td {
+    text-align: left;
+}
+
+th:last-child,
+td:last-child {
+    text-align: right;
 }
 </style>

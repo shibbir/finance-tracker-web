@@ -21,21 +21,16 @@ body {
 
 select,
 input[type='date'] {
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
     box-sizing: border-box;
     padding: 0.5rem;
     background-color: var(--color-input-bg);
     color: var(--color-input-text);
     border: 1px solid var(--color-input-border);
-    border-radius: 4px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    /* background-color: var(--color-surface); */
     color: var(--color-text);
     font-size: 0.95rem;
     border: 1px solid var(--color-border);
@@ -46,7 +41,7 @@ thead th {
     color: var(--color-muted);
     padding: 0.75rem;
     text-align: left;
-    font-weight: 600;
+    font-weight: bold;
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -65,6 +60,12 @@ tbody tr:nth-child(even) {
 
 tbody tr:hover {
     background-color: #333333;
+}
+
+tfoot td {
+    padding: 0.75rem;
+    background-color: var(--color-surface);
+    white-space: nowrap;
 }
 
 table a {
@@ -131,7 +132,7 @@ table a:hover {
 .grid-layout {
     display: grid;
     grid-template-columns: 300px 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: stretch;
 }
 
@@ -139,4 +140,23 @@ table a:hover {
     .grid-layout {
         grid-template-columns: 1fr;
     }
+}
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: 1.5rem 0 1rem;
+    border-bottom: 2px solid var(--color-primary);
+    padding-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 5px rgba(79, 157, 252, 0.3);
 }

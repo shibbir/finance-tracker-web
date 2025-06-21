@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import format_currency from '@/core/currency_formatter';
 import useLedgerStore from '@/modules/ledger/ledger.store';
 import useTransactionStore from '@/modules/transaction/transaction.store';
 import TransactionsDatatable from '@/components/TransactionsDatatable.vue';
@@ -61,19 +62,25 @@ onMounted(async () => {
     await store.getLedger(route.params.id);
     filtersReady.value = true;
 });
+
+const inflow = computed(() => transactionStore.transactions.filter((tx) => tx.amount > 0 && tx.category?._id).reduce((sum, tx) => sum + tx.amount, 0));
+
+const outflow = computed(() =>
+    transactionStore.transactions.filter((tx) => tx.amount < 0 && tx.category?._id).reduce((sum, tx) => sum + Math.abs(tx.amount), 0)
+);
 </script>
 
 <template>
     <div class="container">
         <div class="grid-layout">
             <form class="filter-form" @submit.prevent>
-                <h3 style="margin: 0 0 0.5rem 0;">Filter Transactions</h3>
+                <h3 style="margin: 0 0 0.5rem 0">Filter Transactions</h3>
 
                 <div class="form-group">
                     <label for="account">Account</label>
                     <select id="account" v-model="selectedAccount">
                         <option value="">All</option>
-                        <option v-for="acc in accounts" :key="acc._id" :value="acc._id">{{ acc.name }}</option>
+                        <option v-for="acc in accounts" :key="acc._id" :value="acc._id">{{ acc.name }} {{ format_currency(acc.balance) }}</option>
                     </select>
                 </div>
 
@@ -103,7 +110,8 @@ onMounted(async () => {
                     <input type="date" v-model="endDate" />
                 </div>
 
-                Total Transactions: {{ transactionStore.transactions.length }}
+                <h3>Inflow: {{ format_currency(inflow) }}</h3>
+                <h3>Outflow: {{ format_currency(outflow) }}</h3>
             </form>
 
             <div v-if="filtersReady" class="table-wrapper">
@@ -118,7 +126,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 1rem;
+    padding: 0.5rem;
     border: 1px solid var(--color-border);
     background-color: var(--color-surface);
     height: 100%;
@@ -134,5 +142,12 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     background-color: var(--color-surface);
+}
+
+select,
+input[type='date'] {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
 }
 </style>
