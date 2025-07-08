@@ -1,5 +1,5 @@
 import currency from 'currency.js';
-import useLedgerStore from '@/modules/ledger/ledger.store';
+import useLedgerStore from '@/stores/ledger.store';
 
 export default (value: number) => {
     const ledgerStore = useLedgerStore();

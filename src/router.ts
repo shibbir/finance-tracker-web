@@ -3,8 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import Login from '@/views/Login.vue';
 import Dashboard from '@/views/Dashboard.vue';
-import LedgerView from '@/views/LedgerView.vue';
-import IncomeVsExpenseView from '@/modules/report/IncomeVsExpenseView.vue';
+import LedgerLayout from '@/components/LedgerLayout.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -20,13 +19,24 @@ const router = createRouter({
         },
         {
             path: '/ledgers/:id',
-            component: LedgerView,
-            meta: { requiresAuth: true }
-        },
-        {
-            path: '/ledgers/:id/report/income-vs-expense',
-            component: IncomeVsExpenseView,
-            meta: { requiresAuth: true }
+            component: LedgerLayout,
+            meta: { requiresAuth: true },
+            children: [
+                {
+                    path: '',
+                    redirect: (to) => `/ledgers/${to.params.id}/transactions`
+                },
+                {
+                    path: 'transactions',
+                    name: 'LedgerTransactions',
+                    component: () => import('@/views/TransactionsView.vue')
+                },
+                {
+                    path: 'reports',
+                    name: 'LedgerReports',
+                    component: () => import('@/views/IncomeVsExpenseView.vue')
+                }
+            ]
         }
     ]
 });
@@ -37,15 +47,15 @@ router.beforeEach(async (to) => {
     if (to.meta.requiresAuth && !currentUser) {
         return {
             path: '/login',
-            query: {
-                redirect: to.fullPath
-            }
+            query: { redirect: to.fullPath }
         };
     }
 
-    if (!to.meta.requiresAuth && currentUser) {
-        router.push('/');
+    if (to.path === '/login' && currentUser) {
+        return to.query.redirect?.toString() || '/';
     }
+
+    return true;
 });
 
 export default router;

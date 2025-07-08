@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import useLedgerStore from '@/modules/ledger/ledger.store';
+import useLedgerStore from '@/stores/ledger.store';
 
 export default (date: Date | string): string => {
     const ledgerStore = useLedgerStore();

@@ -3,7 +3,7 @@ import { watch } from 'vue';
 
 import format_date from '@/core/date_formatter';
 import format_currency from '@/core/currency_formatter';
-import useTransactionStore from '@/modules/transaction/transaction.store';
+import useTransactionStore from '@/stores/transaction.store';
 
 const transactionStore = useTransactionStore();
 
@@ -20,6 +20,10 @@ watch(
     },
     { deep: true, immediate: true }
 );
+
+function amountClass(amount: number) {
+    return amount > 0 ? 'amount-positive' : amount < 0 ? 'amount-negative' : '';
+}
 </script>
 
 <template>
@@ -41,7 +45,7 @@ watch(
                 <td>{{ tx.merchant.name }}</td>
                 <td>{{ tx.category.name }}</td>
                 <td class="memo-cell" v-if="props.fields?.includes('memo')" :title="tx.memo">{{ tx.memo }}</td>
-                <td>{{ format_currency(tx.amount) }}</td>
+                <td :class="amountClass(tx.amount)">{{ format_currency(tx.amount) }}</td>
             </tr>
         </tbody>
     </table>
@@ -65,5 +69,15 @@ td {
 th:last-child,
 td:last-child {
     text-align: right;
+}
+
+.amount-positive {
+    color: green;
+    font-weight: 500;
+}
+
+.amount-negative {
+    color: crimson;
+    font-weight: 500;
 }
 </style>

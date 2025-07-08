@@ -3,7 +3,7 @@ import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 
-import useLedgerStore from '@/modules/ledger/ledger.store';
+import useLedgerStore from '@/stores/ledger.store';
 
 const router = useRouter();
 

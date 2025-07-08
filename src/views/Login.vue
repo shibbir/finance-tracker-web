@@ -1,22 +1,28 @@
-<script lang="ts">
-import { GoogleAuthProvider } from 'firebase/auth';
-export const googleAuthProvider = new GoogleAuthProvider();
-</script>
-
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useFirebaseAuth } from 'vuefire';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
 const auth = useFirebaseAuth()!;
+const router = useRouter();
+const route = useRoute();
 
-const error = ref(null);
-function signinPopup() {
+const error = ref<unknown>(null);
+
+const provider = new GoogleAuthProvider();
+
+async function signinPopup() {
     error.value = null;
-    signInWithPopup(auth, googleAuthProvider).catch((reason) => {
-        console.error('Failed sign', reason);
+    try {
+        await signInWithPopup(auth, provider);
+
+        const redirectPath = route.query.redirect?.toString() || '/';
+        router.push(redirectPath);
+    } catch (reason) {
+        console.error('Failed sign-in', reason);
         error.value = reason;
-    });
+    }
 }
 </script>
 
