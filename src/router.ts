@@ -32,8 +32,8 @@ const router = createRouter({
                     component: () => import('@/views/TransactionsView.vue')
                 },
                 {
-                    path: 'reports',
-                    name: 'LedgerReports',
+                    path: 'monthly-report',
+                    name: 'MonthlyReport',
                     component: () => import('@/views/IncomeVsExpenseView.vue')
                 }
             ]

@@ -44,7 +44,6 @@ const emit = defineEmits<{
 function executeFilter() {
     const f = filter.value;
 
-    // Update the URL with new filter params
     router.replace({
         query: {
             ...route.query,
@@ -79,7 +78,6 @@ onBeforeUnmount(() => {
     document.body.classList.remove('modal-open');
 });
 
-// Optional: auto-apply filters on load from query
 onMounted(() => {
     loadFiltersFromQuery();
     emit('update:filter', filter.value);

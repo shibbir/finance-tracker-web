@@ -165,3 +165,13 @@ button {
 body.modal-open {
     overflow: hidden;
 }
+
+.amount-positive {
+    color: green;
+    font-weight: 500;
+}
+
+.amount-negative {
+    color: crimson;
+    font-weight: 500;
+}

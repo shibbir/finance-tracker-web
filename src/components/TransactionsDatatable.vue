@@ -70,14 +70,4 @@ th:last-child,
 td:last-child {
     text-align: right;
 }
-
-.amount-positive {
-    color: green;
-    font-weight: 500;
-}
-
-.amount-negative {
-    color: crimson;
-    font-weight: 500;
-}
 </style>

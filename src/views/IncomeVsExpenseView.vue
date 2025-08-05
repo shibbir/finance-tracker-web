@@ -7,30 +7,39 @@ import useLedgerStore from '@/stores/ledger.store';
 import TransactionsDatatable from '@/components/TransactionsDatatable.vue';
 
 const route = useRoute();
-const store = useLedgerStore();
+const ledgerStore = useLedgerStore();
 
 onMounted(async () => {
-    await store.getLedger(route.params.id);
+    await ledgerStore.getLedger(route.params.id);
 });
 
 const years = [2025, 2024, 2023, 2022];
 const selectedYear = ref(new Date().getFullYear());
+const selectedAccount = ref('');
+const accounts = computed(() => ledgerStore.ledger?.accounts || []);
 
-const categorical_monthly_expenses = ref([]);
+const monthly_report = ref([]);
 
 interface Filter {
     category_id: string;
     start_date: string;
     end_date: string;
+    account_id?: string;
 }
 
 watch(
-    selectedYear,
+    [selectedYear, selectedAccount],
     () => {
-        fetch(`${import.meta.env.VITE_SERVICE_BASE_URL}/ledgers/${route.params.id}/categorical-monthly-expenses?year=${selectedYear.value}`)
+        let url = `${import.meta.env.VITE_SERVICE_BASE_URL}/ledgers/${route.params.id}/monthly-report?year=${selectedYear.value}`;
+
+        if (selectedAccount.value) {
+            url += `&account_id=${selectedAccount.value}`;
+        }
+
+        fetch(url)
             .then((response) => response.json())
             .then((data) => {
-                categorical_monthly_expenses.value = data;
+                monthly_report.value = data;
             });
     },
     { immediate: true }
@@ -42,7 +51,8 @@ const showTransactionsForSelectedCategory = function (category_id: string, month
     filter.value = {
         category_id,
         start_date: startOfMonth(new Date(selectedYear.value, month)).toISOString(),
-        end_date: endOfMonth(new Date(selectedYear.value, month)).toISOString()
+        end_date: endOfMonth(new Date(selectedYear.value, month)).toISOString(),
+        ...(selectedAccount.value ? { account_id: selectedAccount.value } : {})
     };
 };
 
@@ -56,24 +66,46 @@ const filter = ref<Filter>({
 });
 
 const incomeRows = computed(() => {
-    return categorical_monthly_expenses.value.filter((row) => {
+    return monthly_report.value.filter((row) => {
         const total = months.reduce((acc, month) => acc + (row[month.toLowerCase()] || 0), 0);
         return total > 0;
     });
 });
 
 const expenseRows = computed(() => {
-    return categorical_monthly_expenses.value.filter((row) => {
+    return monthly_report.value.filter((row) => {
         const total = months.reduce((acc, month) => acc + (row[month.toLowerCase()] || 0), 0);
         return total <= 0;
     });
 });
 
-const netIncome = computed(() => {
+const inflow = computed(() => {
+    const inflowRow: Record<string, number> = {};
+    for (const month of months) {
+        inflowRow[month.toLowerCase()] = monthly_report.value.reduce((sum, row) => {
+            const val = row[month.toLowerCase()] || 0;
+            return sum + (val > 0 ? val : 0);
+        }, 0);
+    }
+    return inflowRow;
+});
+
+const outflow = computed(() => {
+    const outflowRow: Record<string, number> = {};
+    for (const month of months) {
+        outflowRow[month.toLowerCase()] = monthly_report.value.reduce((sum, row) => {
+            const val = row[month.toLowerCase()] || 0;
+            return sum + (val < 0 ? val : 0);
+        }, 0);
+    }
+    return outflowRow;
+});
+
+const netFlow = computed(() => {
     const netRow: Record<string, number> = {};
 
     for (const month of months) {
-        netRow[month.toLowerCase()] = categorical_monthly_expenses.value.reduce((sum, row) => {
+        netRow[month.toLowerCase()] = monthly_report.value.reduce((sum, row) => {
             return sum + (row[month.toLowerCase()] || 0);
         }, 0);
     }
@@ -88,6 +120,11 @@ const netIncome = computed(() => {
             Monthly Income vs Expense Report for
             <select v-model="selectedYear">
                 <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+            </select>
+
+            <select v-model="selectedAccount">
+                <option value="">All</option>
+                <option v-for="account in accounts" :key="account._id" :value="account._id">{{ account.name }}</option>
             </select>
         </h3>
         <table>
@@ -124,9 +161,25 @@ const netIncome = computed(() => {
             </tbody>
             <tfoot>
                 <tr>
-                    <td>Net Income</td>
-                    <td v-for="(month, index) in months" :key="'net-' + index">
-                        {{ format_currency(netIncome[month.toLowerCase()]) }}
+                    <td>Inflow</td>
+                    <td v-for="(month, index) in months" :key="'inflow-' + index">
+                        {{ format_currency(inflow[month.toLowerCase()]) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Outflow</td>
+                    <td v-for="(month, index) in months" :key="'outflow-' + index">
+                        {{ format_currency(outflow[month.toLowerCase()]) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Net Flow</td>
+                    <td
+                        v-for="(month, index) in months"
+                        :key="'net-' + index"
+                        :class="{ 'amount-positive': netFlow[month.toLowerCase()] > 0, 'amount-negative': netFlow[month.toLowerCase()] < 0 }"
+                    >
+                        {{ format_currency(netFlow[month.toLowerCase()]) }}
                     </td>
                 </tr>
             </tfoot>
@@ -154,14 +207,17 @@ const netIncome = computed(() => {
 
 tfoot td {
     font-weight: bold;
-    border-top: 2px solid #ccc;
+}
+
+tfoot td:first-child {
+    text-align: left;
 }
 
 tfoot tr {
     text-align: right;
 }
 
-tfoot td:first-child {
-    text-align: left;
+tfoot tr:first-child, tfoot tr:last-child {
+    border-top: 2px solid #ccc;
 }
 </style>

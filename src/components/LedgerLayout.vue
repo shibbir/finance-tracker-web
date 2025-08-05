@@ -13,7 +13,7 @@
                                 <router-link :to="`/ledgers/${ledgerId}/transactions`"> Transactions </router-link>
                             </li>
                             <li>
-                                <router-link :to="`/ledgers/${ledgerId}/reports`"> Reports </router-link>
+                                <router-link :to="`/ledgers/${ledgerId}/monthly-report`"> Monthly Report </router-link>
                             </li>
                         </ul>
                     </nav>
