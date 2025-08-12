@@ -47,14 +47,14 @@ table {
 thead th {
     background-color: var(--color-surface);
     color: var(--color-muted);
-    padding: 0.75rem;
+    padding: 0.5rem;
     text-align: left;
     font-weight: bold;
     border-bottom: 1px solid var(--color-border);
 }
 
 tbody td {
-    padding: 0.75rem;
+    padding: 0.5rem;
     border-top: 1px solid var(--color-border);
 }
 
@@ -71,7 +71,7 @@ tbody tr:hover {
 }
 
 tfoot td {
-    padding: 0.75rem;
+    padding: 0.5rem;
     background-color: var(--color-surface);
     white-space: nowrap;
 }
@@ -92,7 +92,6 @@ table a:hover {
     margin: 0 auto;
     padding: 1.5rem;
     box-sizing: border-box;
-    max-width: 1700px;
 }
 
 .table-wrapper {
@@ -115,9 +114,13 @@ table a:hover {
 .modal-content {
     position: relative;
     background: var(--color-surface, #2a2a2a);
-    width: 35%;
+    width: 40%;
     margin: 5% auto;
     color: var(--color-text);
+}
+
+.modal-content h3 {
+    padding-left: 5px;
 }
 
 .modal .close-btn {

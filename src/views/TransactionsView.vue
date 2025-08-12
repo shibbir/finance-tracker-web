@@ -73,6 +73,10 @@ function exportTransactions() {
     display: flex;
     flex-direction: column;
     height: 100%;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: 5px;
+    padding-bottom: 0;
 }
 
 .toolbar {
@@ -81,6 +85,8 @@ function exportTransactions() {
     margin-bottom: 1rem;
     flex-wrap: wrap;
     justify-content: flex-end;
+    padding-bottom: 5px;
+    border-bottom: 2px solid var(--color-primary);
 }
 
 @media (max-width: 768px) {

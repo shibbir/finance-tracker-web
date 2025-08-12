@@ -43,7 +43,7 @@ function amountClass(amount: number) {
                 <td>{{ format_date(tx.date) }}</td>
                 <td>{{ tx.account.name }}</td>
                 <td>{{ tx.merchant.name }}</td>
-                <td>{{ tx.category.name }}</td>
+                <td>{{ `${tx.category_group.name}: ${tx.category.name}` }}</td>
                 <td class="memo-cell" v-if="props.fields?.includes('memo')" :title="tx.memo">{{ tx.memo }}</td>
                 <td :class="amountClass(tx.amount)">{{ format_currency(tx.amount) }}</td>
             </tr>
@@ -69,5 +69,13 @@ td {
 th:last-child,
 td:last-child {
     text-align: right;
+}
+
+table {
+    border: none;
+}
+
+tbody tr:nth-child(odd), tbody tr:nth-child(even) {
+    background-color: transparent;
 }
 </style>

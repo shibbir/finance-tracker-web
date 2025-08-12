@@ -12,19 +12,24 @@ const showModal = ref(false);
 const selectedAccount = ref('');
 const selectedMerchant = ref('');
 const selectedCategory = ref('');
+const selectedCategoryGroup = ref('');
 const startDate = ref('');
 const endDate = ref('');
+const selectedType = ref('');
 
 const accounts = computed(() => ledgerStore.ledger?.accounts || []);
 const merchants = computed(() => ledgerStore.ledger?.merchants || []);
 const categories = computed(() => ledgerStore.ledger?.categories || []);
+const category_groups = computed(() => ledgerStore.ledger?.category_groups || []);
 
 function loadFiltersFromQuery() {
     selectedAccount.value = (route.query.account_id as string) || '';
     selectedMerchant.value = (route.query.merchant_id as string) || '';
     selectedCategory.value = (route.query.category_id as string) || '';
+    selectedCategoryGroup.value = (route.query.category_group_id as string) || '';
     startDate.value = (route.query.start_date as string) || '';
     endDate.value = (route.query.end_date as string) || '';
+    selectedType.value = (route.query.type as string) || '';
 }
 
 const filter = computed(() => {
@@ -32,8 +37,10 @@ const filter = computed(() => {
     if (selectedAccount.value) f.account_id = selectedAccount.value;
     if (selectedMerchant.value) f.merchant_id = selectedMerchant.value;
     if (selectedCategory.value) f.category_id = selectedCategory.value;
+    if (selectedCategoryGroup.value) f.category_group_id = selectedCategoryGroup.value;
     if (startDate.value) f.start_date = startDate.value;
     if (endDate.value) f.end_date = endDate.value;
+    if (selectedType.value) f.type = selectedType.value;
     return f;
 });
 
@@ -109,7 +116,17 @@ onMounted(() => {
                 </div>
 
                 <div>
-                    <label for="category">Category</label>
+                    <label for="category-group">Category Group</label>
+                    <select id="category-group" v-model="selectedCategoryGroup">
+                        <option value="">All</option>
+                        <option v-for="cat in category_groups" :key="cat._id" :value="cat._id">
+                            {{ cat.name }}
+                        </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="category">Child Category</label>
                     <select id="category" v-model="selectedCategory">
                         <option value="">All</option>
                         <option v-for="cat in categories" :key="cat._id" :value="cat._id">
@@ -126,6 +143,15 @@ onMounted(() => {
                 <div>
                     <label for="end-date">End Date</label>
                     <input type="date" id="end-date" v-model="endDate" />
+                </div>
+
+                <div>
+                    <label for="category">Type</label>
+                    <select id="category" v-model="selectedType">
+                        <option value="">All</option>
+                        <option value="credit">Credit</option>
+                        <option value="debit">Debit</option>
+                    </select>
                 </div>
             </form>
 
